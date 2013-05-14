@@ -1,0 +1,14 @@
+#
+# Copyright 2010 Ettus Research LLC
+#
+
+##################################################
+# CARRIERSENSE_SRCS Sources
+##################################################
+CARRIERSENSE_SRCS = $(abspath $(addprefix $(BASE_DIR)/../carriersense/, \
+cs_component.v \
+comparator_component.v \
+average_component.v \
+coregen/cordic_in.v \
+coregen/cordic_in.xco \
+))
