@@ -24,6 +24,7 @@ include ../../vrt/Makefile.srcs
 include ../../udp/Makefile.srcs
 include ../../coregen/Makefile.srcs
 include ../../gpmc/Makefile.srcs
+include ../../carriersense/Makefile.srcs
 
 ##################################################
 # Project Properties

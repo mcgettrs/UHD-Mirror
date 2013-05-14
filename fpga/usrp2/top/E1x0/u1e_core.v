@@ -167,6 +167,10 @@ module u1e_core
       .sample(sample_rx0), .run(run_rx0), .strobe(strobe_rx0),
       .debug() );
 
+   cs_component carrier_sense(.clk(wb_clk), .rst(wb_rst), .real_value(sample_rx0(15:0)),
+	.img_value(sample_rx0(31:16)), .run(run_rx0), strobe(strobe_rx0),
+    .present_next(present_next));
+
    vita_rx_chain #(.BASE(SR_RX_CTRL0), .UNIT(0), .FIFOSIZE(9), .PROT_ENG_FLAGS(0)) vita_rx_chain0
      (.clk(wb_clk),.reset(wb_rst),.clear(clear_rx),
       .set_stb(set_stb),.set_addr(set_addr),.set_data(set_data),
@@ -225,7 +229,9 @@ module u1e_core
       .err_data_o(tx_err_data), .err_src_rdy_o(tx_err_src_rdy), .err_dst_rdy_i(tx_err_dst_rdy),
       .tx_i(tx_i_int),.tx_q(tx_q_int),
       .underrun(tx_underrun_dsp), .run(run_tx),
-      .debug(debug_vt));
+      .debug(debug_vt),
+      .carrier_present(present_next)
+      );
 
    tx_frontend #(.BASE(SR_TX_FRONT), .WIDTH_OUT(14)) tx_frontend
      (.clk(wb_clk), .rst(wb_rst),
@@ -335,7 +341,7 @@ module u1e_core
    assign test_ctrl = xfer_rate[11:8];
    assign test_rate = xfer_rate[7:0];
    
-   assign { debug_led[3:0] } = ~{1'b1, run_tx, run_rx0 | run_rx1, cgen_st_ld};
+   assign { debug_led[3:0] } = ~{present_next, run_tx, run_rx0 | run_rx1, cgen_st_ld};
    assign { cgen_sync_b, cgen_ref_sel } = reg_cgen_ctrl;
    
    assign s0_dat_miso = (s0_adr[6:0] == REG_LEDS) ? reg_leds : 

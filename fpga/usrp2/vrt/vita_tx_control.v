@@ -36,7 +36,7 @@ module vita_tx_control
     output [WIDTH-1:0] sample,
     output reg run,
     input strobe,
-
+    input carrier_present,
     output [31:0] debug
     );
 
@@ -107,22 +107,23 @@ module vita_tx_control
      else
        case(ibs_state)
 	 IBS_IDLE :
-	   if(sample_fifo_src_rdy_i)
-	     if(seqnum_err)
+       if(carrier_present ==0) begin
+	     if(sample_fifo_src_rdy_i)
+	       if(seqnum_err)
 	       begin
-		  ibs_state <= IBS_ERROR;
-		  error_code <= CODE_SEQ_ERROR;
-		  send_error <= 1;
+		    ibs_state <= IBS_ERROR;
+		    error_code <= CODE_SEQ_ERROR;
+		    send_error <= 1;
 	       end
-	     else if(~send_at | now)
-	       ibs_state <= IBS_RUN;
-	     else if((late_qual & late_del) | too_early)
+	       else if(~send_at | now)
+	         ibs_state <= IBS_RUN;
+	       else if((late_qual & late_del) | too_early)
 	       begin
-		  ibs_state <= IBS_ERROR;
-		  error_code <= CODE_TIME_ERROR;
-		  send_error <= 1;
+		    ibs_state <= IBS_ERROR;
+		    error_code <= CODE_TIME_ERROR;
+		    send_error <= 1;
 	       end
-	 
+	   end
 	 IBS_RUN :
 	   if(strobe)
 	     if(~sample_fifo_src_rdy_i)
@@ -161,7 +162,10 @@ module vita_tx_control
 		  send_error <= 1;
 	       end
 	     else
-	       ibs_state <= IBS_RUN;
+           if(carrier_present ==0)
+	         ibs_state <= IBS_RUN;
+           else
+			 ibs_state <= IBS_IDLE;
 	 
 	 IBS_ERROR :
 	   begin
@@ -204,19 +208,24 @@ module vita_tx_control
        end
      else 
        if (ibs_state == IBS_RUN)
-	 if(eob & eop & strobe & sample_fifo_src_rdy_i)
-	   run <= 0;
-	 else 
-	   begin
+	     if(eob & eop & strobe & sample_fifo_src_rdy_i)
+	       run <= 0;
+	     else 
+	     begin
 	      run <= 1;
 	      countdown <= MAX_IDLE;
-	   end
+	     end
        else
-	 if (countdown == 0)
-	   run <= 0;
-	 else
-	   countdown <= countdown - 1;
-   	   
+       begin
+        if (ibs_state == IBS_IDLE | ibs_state == IBS_CONT_BURST)
+          if(carrier_present ==1)
+			run<=0;
+	    if (countdown == 0)
+	      run <= 0;
+	    else
+	      countdown <= countdown - 1;
+   	   end
+
    always @(posedge clk)
      if(reset | clear)
        packet_consumed <= 0;

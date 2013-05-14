@@ -24,7 +24,8 @@ module vita_tx_chain
     parameter PROT_ENG_FLAGS=0,
     parameter USE_TRANS_HEADER=0,
     parameter DSP_NUMBER=0)
-   (input clk, input reset,
+   (input carrier_present,
+    input clk, input reset,
     input set_stb, input [7:0] set_addr, input [31:0] set_data,
     input [63:0] vita_time,
     input [35:0] tx_data_i, input tx_src_rdy_i, output tx_dst_rdy_o,
@@ -78,7 +79,7 @@ module vita_tx_chain
       .vita_time(vita_time), .error(error), .ack(ack), .error_code(error_code),
       .sample_fifo_i(tx1_data), .sample_fifo_src_rdy_i(tx1_src_rdy), .sample_fifo_dst_rdy_o(tx1_dst_rdy),
       .sample(sample_tx), .run(run), .strobe(strobe_tx), .packet_consumed(packet_consumed),
-      .debug(debug_vtc) );
+      .debug(debug_vtc),.carrier_present(carrier_present) );
    
    dsp_core_tx #(.BASE(BASE_DSP)) dsp_core_tx
      (.clk(clk),.rst(reset),
