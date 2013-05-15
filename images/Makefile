@@ -245,7 +245,7 @@ ifdef HAS_XTCLSH
 
 _usrp_e100_fpga_dir = $(TOP_FPGA_DIR)/usrp2/top/E1x0
 _usrp_e100_fpga_bin = $(BUILT_IMAGES_DIR)/usrp_e100_fpga_v2.bin
-IMAGES_LIST += $(_usrp_e100_fpga_bin)
+IMAGES_LIST = $(_usrp_e100_fpga_bin)
 
 $(_usrp_e100_fpga_bin): $(GLOBAL_DEPS)
 	cd $(_usrp_e100_fpga_dir) && make -f Makefile.E100 clean
@@ -261,7 +261,7 @@ ifdef HAS_XTCLSH
 
 _usrp_e110_fpga_dir = $(TOP_FPGA_DIR)/usrp2/top/E1x0
 _usrp_e110_fpga_bin = $(BUILT_IMAGES_DIR)/usrp_e110_fpga.bin
-IMAGES_LIST += $(_usrp_e110_fpga_bin)
+#IMAGES_LIST += $(_usrp_e110_fpga_bin)
 
 $(_usrp_e110_fpga_bin): $(GLOBAL_DEPS)
 	cd $(_usrp_e110_fpga_dir) && make -f Makefile.E110 clean

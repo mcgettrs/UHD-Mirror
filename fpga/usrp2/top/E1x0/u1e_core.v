@@ -167,8 +167,8 @@ module u1e_core
       .sample(sample_rx0), .run(run_rx0), .strobe(strobe_rx0),
       .debug() );
 
-   cs_component carrier_sense(.clk(wb_clk), .rst(wb_rst), .real_value(sample_rx0(15:0)),
-	.img_value(sample_rx0(31:16)), .run(run_rx0), strobe(strobe_rx0),
+   cs_component carrier_sense(.clk(wb_clk), .rst(wb_rst), .real_value(sample_rx0[15:0]),
+	.img_value(sample_rx0[31:16]), .run(run_rx0), .strobe(strobe_rx0),
     .present_next(present_next));
 
    vita_rx_chain #(.BASE(SR_RX_CTRL0), .UNIT(0), .FIFOSIZE(9), .PROT_ENG_FLAGS(0)) vita_rx_chain0
